@@ -4,14 +4,9 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '2'))
     skipDefaultCheckout true
   }
-  post {
-    aborted {
-      echo "Why didn't you push my button?"
-    }
-  }
   stages {
     stage('Test') {
-      agent any
+      agent { label 'nodejs-app' }
       steps {
         checkout scm
         container('nodejs') {
@@ -26,13 +21,13 @@ pipeline {
       }
     }
     stage('Build and Push Image') {
+      agent any
       when {
          beforeAgent true
          branch 'master'
       }
       steps {
          echo "TODO - build and push image"
-         unstash 'app'
       }
       post {
         success {
@@ -45,9 +40,16 @@ pipeline {
         beforeAgent true
         branch 'master'
       }
+      options {
+        timeout(time: 60, unit: 'SECONDS') 
+      }
+      input {
+        message "Should we deploy?"
+        submitterParameter "APPROVER"
+      }
       steps {
         echo "Continuing with deployment - approved by ${APPROVER}"
       }
-    }
+    }   
   }
 }
