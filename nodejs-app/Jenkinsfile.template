@@ -1,20 +1,3 @@
-Skip to content
- 
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- @aprilkmace Sign out
-0
-0 38 cloudbees-core-cd-workshop/custom-marker-pipelines
- Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights
-custom-marker-pipelines/nodejs-app/Jenkinsfile.template
-f5b594d  19 days ago
-@kmadel kmadel Update Jenkinsfile.template
-     
-50 lines (49 sloc)  1019 Bytes
 pipeline {
   agent none
   options { 
@@ -64,16 +47,3 @@ pipeline {
     }   
   }
 }
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Press h to open a hovercard with more details.
