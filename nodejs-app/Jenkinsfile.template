@@ -1,35 +1,29 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ @aprilkmace Sign out
+0
+0 38 cloudbees-core-cd-workshop/custom-marker-pipelines
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights
+custom-marker-pipelines/nodejs-app/Jenkinsfile.template
+f5b594d  19 days ago
+@kmadel kmadel Update Jenkinsfile.template
+     
+50 lines (49 sloc)  1019 Bytes
 pipeline {
   agent none
   options { 
     buildDiscarder(logRotator(numToKeepStr: '2'))
     skipDefaultCheckout true
-    preserveStashes(buildCount: 2)
   }
   stages {
     stage('Test') {
-    agent {
-        kubernetes {
-          label 'nodejs-app-inline'
-          yaml """
-kind: Pod
-metadata:
-  name: nodejs-app
-spec:
-  containers:
-  - name: nodejs
-    image: node:10.10.0-alpine
-    command:
-    - cat
-    tty: true
-  - name: testcafe
-    image: 946759952272.dkr.ecr.us-east-1.amazonaws.com/kypseli/testcafe:alpha-1
-    command:
-    - cat
-    tty: true
-          """
-        }
-      }
-    }
+      agent { label 'nodejs-app' }
       steps {
         checkout scm
         container('nodejs') {
@@ -37,21 +31,14 @@ spec:
           sh 'node --version'
         }
       }
-      post {
-        success {
-          stash name: 'app', includes: '*.js, public/**, views/*, Dockerfile'
-        }
-      }
     }
     stage('Build and Push Image') {
-      agent any
       when {
          beforeAgent true
          branch 'master'
       }
       steps {
          echo "TODO - build and push image"
-         unstash 'app'
       }
       post {
         success {
@@ -64,12 +51,29 @@ spec:
         beforeAgent true
         branch 'master'
       }
+      options {
+        timeout(time: 60, unit: 'SECONDS') 
+      }
       input {
         message "Should we deploy?"
         submitterParameter "APPROVER"
       }
       steps {
         echo "Continuing with deployment - approved by ${APPROVER}"
+      }
     }   
   }
 }
+© 2018 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Press h to open a hovercard with more details.
